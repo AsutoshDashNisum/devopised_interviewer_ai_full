@@ -1,0 +1,23 @@
+module.exports = {
+  testEnvironment: 'jsdom',
+  roots: ['<rootDir>/src'],
+  testMatch: ['**/__tests__/**/*.test.js', '**/?(*.)+(spec|test).js'],
+  moduleNameMapper: {
+    '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
+    '\\.(jpg|jpeg|png|gif|svg)$': '<rootDir>/src/__mocks__/fileMock.js',
+  },
+  setupFilesAfterEnv: ['<rootDir>/src/setupTests.js'],
+  transform: {
+    '^.+\\.(js|jsx)$': 'babel-jest',
+  },
+  collectCoverageFrom: [
+    'src/**/*.{js,jsx}',
+    '!src/main.jsx',
+    '!src/index.jsx',
+    '!src/**/*.test.{js,jsx}',
+  ],
+  coveragePathIgnorePatterns: ['/node_modules/', '/build/'],
+  moduleFileExtensions: ['js', 'jsx', 'json'],
+  testTimeout: 10000,
+};
+

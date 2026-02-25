@@ -1,0 +1,11 @@
+/**
+ * Babel Configuration for Jest
+ * Transpiles JSX and ES6+ for Node.js compatibility
+ */
+module.exports = {
+  presets: [
+    ['@babel/preset-env', { targets: { node: 'current' } }],
+    ['@babel/preset-react', { runtime: 'automatic' }],
+  ],
+};
+
