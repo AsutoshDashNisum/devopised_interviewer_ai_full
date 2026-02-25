@@ -1,0 +1,725 @@
+{
+  "info": {
+    "_postman_id": "interview-evaluation-api-feature-flag",
+    "name": "Interview Evaluation API - Feature Flag Architecture",
+    "description": "Production-ready Interview Evaluation API with Feature Flag Architecture\n\n🎯 AI Integration Status: DISABLED by default (ai.enabled=false)\n\nWhen DISABLED: Returns deterministic, seniority-based dummy responses\nWhen ENABLED: Calls AI/LLM provider (OpenAI, Anthropic, etc.)\n\nThis collection demonstrates:\n✅ Candidate-only evaluation (/api/v1/evaluate)\n✅ Full evaluation with optional interviewer assessment (/api/v1/evaluate/full)\n✅ Seniority-based deterministic responses (junior/mid/senior)\n✅ Error handling (validation, missing fields, invalid JSON)\n✅ Health check and API info endpoints\n\nFeature Flag Benefits:\n• No randomness - deterministic output\n• API wiring proven and working\n• Zero downtime switchover to real AI\n• Production-ready code structure",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "12345678"
+  },
+  "item": [
+    {
+      "name": "Health & Status",
+      "item": [
+        {
+          "name": "Health Check",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response has ok status', function () {",
+                  "    let jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.status).to.equal('ok');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/health",
+              "host": ["{{base_url}}"],
+              "path": ["health"]
+            },
+            "description": "Check if the API server is running and healthy"
+          },
+          "response": []
+        },
+        {
+          "name": "API Info",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response has service name', function () {",
+                  "    let jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.service).to.equal('Interview Evaluation API');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/",
+              "host": ["{{base_url}}"],
+              "path": [""]
+            },
+            "description": "Get API information and available endpoints"
+          },
+          "response": []
+        }
+      ],
+      "description": "Health check and API information endpoints"
+    },
+    {
+      "name": "Candidate Evaluation Only - POST /api/v1/evaluate",
+      "item": [
+        {
+          "name": "Junior Developer",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response structure is correct', function () {",
+                  "    let jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('status', 'success');",
+                  "    pm.expect(jsonData).to.have.property('type', 'candidate');",
+                  "    pm.expect(jsonData).to.have.property('overallScore');",
+                  "    pm.expect(jsonData).to.have.property('verdict');",
+                  "    pm.expect(jsonData).to.have.property('skillsEvaluation');",
+                  "    pm.expect(jsonData).to.have.property('communicationScore');",
+                  "    pm.expect(jsonData).to.have.property('problemSolvingScore');",
+                  "    pm.expect(jsonData).to.have.property('strengths');",
+                  "    pm.expect(jsonData).to.have.property('weaknesses');",
+                  "    pm.expect(jsonData).to.have.property('summary');",
+                  "    pm.expect(jsonData).to.have.property('evaluatedAt');",
+                  "});",
+                  "",
+                  "pm.test('Junior level scores are correct', function () {",
+                  "    let jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.overallScore).to.equal(62);",
+                  "    pm.expect(jsonData.verdict).to.equal('borderline');",
+                  "    pm.expect(jsonData.communicationScore).to.equal(7);",
+                  "    pm.expect(jsonData.problemSolvingScore).to.equal(5);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"jobDescription\": \"Junior Frontend Developer - JavaScript, React, CSS, HTML. Familiarity with Git and REST APIs\",\n  \"interviewTranscript\": \"Interviewer: Tell me about your React experience. Candidate: I learned React in a bootcamp 3 months ago. I've built a few small projects with React, including a todo app and a weather app using a public API. I understand components, state, and props.\",\n  \"seniority\": \"junior\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/evaluate",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "evaluate"]
+            },
+            "description": "Evaluate a junior level candidate\nExpected: score 62, verdict 'borderline'\nDeterministic response based on seniority level"
+          },
+          "response": []
+        },
+        {
+          "name": "Mid-Level Developer",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Mid-level scores are correct', function () {",
+                  "    let jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.overallScore).to.equal(75);",
+                  "    pm.expect(jsonData.verdict).to.equal('hire');",
+                  "    pm.expect(jsonData.communicationScore).to.equal(8);",
+                  "    pm.expect(jsonData.problemSolvingScore).to.equal(7);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"jobDescription\": \"Mid-Level Software Engineer - Python, Django, PostgreSQL, Docker, CI/CD pipelines, REST API development\",\n  \"interviewTranscript\": \"Interviewer: Describe your experience with Django. Candidate: I've used Django professionally for 3 years, building REST APIs with Django REST Framework. I'm comfortable with ORM, migrations, authentication, and deployment. I've also worked with PostgreSQL for data modeling and optimization. Recently, I implemented CI/CD pipelines using GitHub Actions.\",\n  \"seniority\": \"mid\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/evaluate",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "evaluate"]
+            },
+            "description": "Evaluate a mid-level developer\nExpected: score 75, verdict 'hire'\nDeterministic response based on seniority level"
+          },
+          "response": []
+        },
+        {
+          "name": "Senior Engineer",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Senior level scores are correct', function () {",
+                  "    let jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.overallScore).to.equal(85);",
+                  "    pm.expect(jsonData.verdict).to.equal('strong_hire');",
+                  "    pm.expect(jsonData.communicationScore).to.equal(9);",
+                  "    pm.expect(jsonData.problemSolvingScore).to.equal(9);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"jobDescription\": \"Senior Backend Engineer - Java, Spring Boot, microservices, cloud infrastructure, system design, AWS/GCP experience\",\n  \"interviewTranscript\": \"Interviewer: Tell me about your experience with large-scale systems. Candidate: I have 8 years of experience designing and building microservices architectures at scale. I've led teams of 5+ engineers, made critical architectural decisions, and successfully migrated legacy monoliths to cloud-native systems. I'm proficient with Spring Boot, Docker, Kubernetes, and AWS services.\",\n  \"seniority\": \"senior\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/evaluate",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "evaluate"]
+            },
+            "description": "Evaluate a senior engineer\nExpected: score 85, verdict 'strong_hire'\nDeterministic response based on seniority level"
+          },
+          "response": []
+        },
+        {
+          "name": "Senior Full Stack Engineer",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response has all required fields', function () {",
+                  "    let jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.status).to.equal('success');",
+                  "    pm.expect(jsonData.skillsEvaluation.length).to.be.greaterThan(0);",
+                  "    pm.expect(jsonData.strengths.length).to.be.greaterThan(0);",
+                  "    pm.expect(jsonData.weaknesses.length).to.be.greaterThan(0);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"jobDescription\": \"Senior Full Stack Engineer with 5+ years experience in TypeScript, React, Node.js, PostgreSQL, Docker, and Kubernetes\",\n  \"interviewTranscript\": \"Interviewer: Tell me about your TypeScript experience. Candidate: I have 6 years of professional TypeScript experience, primarily working on backend microservices and React applications. I've built REST APIs, worked with databases like PostgreSQL and MongoDB, and have experience with Docker and Kubernetes for deployment. I've also led a team of 3 engineers and mentored junior developers.\",\n  \"seniority\": \"senior\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/evaluate",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "evaluate"]
+            },
+            "description": "Evaluate a senior full stack engineer\nExpected: score 85, verdict 'strong_hire'\nDeterministic response based on seniority level"
+          },
+          "response": []
+        }
+      ],
+      "description": "POST /api/v1/evaluate\nCandidate evaluation only (no interviewer assessment)\n\nRequest requires:\n- jobDescription (required)\n- interviewTranscript (required)\n- seniority (required): 'junior', 'mid', or 'senior'\n\nResponse includes:\n- Overall score (0-100)\n- Verdict: 'borderline', 'hire', 'strong_hire'\n- Skills evaluation with proficiency scores\n- Communication and problem-solving scores\n- Strengths and weaknesses\n- Summary and evaluation timestamp"
+    },
+    {
+      "name": "Full Evaluation - POST /api/v1/evaluate/full",
+      "item": [
+        {
+          "name": "Candidate + Interviewer (Senior)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response includes both evaluations', function () {",
+                  "    let jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('candidateEvaluation');",
+                  "    pm.expect(jsonData).to.have.property('interviewerEvaluation');",
+                  "});",
+                  "",
+                  "pm.test('Interviewer evaluation has required fields', function () {",
+                  "    let jsonData = pm.response.json();",
+                  "    let interviewer = jsonData.interviewerEvaluation;",
+                  "    pm.expect(interviewer).to.have.property('overallScore');",
+                  "    pm.expect(interviewer).to.have.property('questionQuality');",
+                  "    pm.expect(interviewer).to.have.property('communicationClarity');",
+                  "    pm.expect(interviewer).to.have.property('biasRisk');",
+                  "    pm.expect(interviewer).to.have.property('strengths');",
+                  "    pm.expect(interviewer).to.have.property('improvements');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"jobDescription\": \"Senior Backend Engineer - Java, Spring Boot, microservices, system design\",\n  \"interviewTranscript\": \"Interviewer: Can you describe your experience with microservices architecture? Candidate: Yes, I've designed and deployed microservices systems handling millions of requests per day. I use Spring Boot with Spring Cloud for service discovery and configuration management. I've also worked extensively with Docker containers and Kubernetes orchestration for deployment and scaling.\",\n  \"seniority\": \"senior\",\n  \"evaluateInterviewer\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/evaluate/full",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "evaluate", "full"]
+            },
+            "description": "Full evaluation with interviewer assessment\n\nRequest:\n- jobDescription (required)\n- interviewTranscript (required)\n- seniority (required): 'junior', 'mid', or 'senior'\n- evaluateInterviewer: true\n\nResponse includes:\n1. Candidate evaluation (same as /api/v1/evaluate)\n2. Interviewer evaluation with:\n   - Overall score (0-10)\n   - Question quality (0-10)\n   - Communication clarity (0-10)\n   - Bias risk assessment (low/medium/high)\n   - Strengths and improvement areas"
+          },
+          "response": []
+        },
+        {
+          "name": "Mid-Level - Without Interviewer Evaluation",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('interviewerEvaluation should be null', function () {",
+                  "    let jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.interviewerEvaluation).to.be.null;",
+                  "});",
+                  "",
+                  "pm.test('candidateEvaluation should be present', function () {",
+                  "    let jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.candidateEvaluation).to.not.be.null;",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"jobDescription\": \"Mid-Level Frontend Engineer - React, TypeScript, CSS, Redux\",\n  \"interviewTranscript\": \"Interviewer: Tell me about your React experience. Candidate: I've been using React professionally for 3 years. I'm comfortable with hooks, context API, and state management with Redux. I've also worked on performance optimization and accessibility.\",\n  \"seniority\": \"mid\",\n  \"evaluateInterviewer\": false\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/evaluate/full",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "evaluate", "full"]
+            },
+            "description": "Full evaluation WITHOUT interviewer assessment\nWhen evaluateInterviewer=false, interviewerEvaluation is null in response"
+          },
+          "response": []
+        },
+        {
+          "name": "Junior - With Optional Interviewer",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Candidate score should be 62 for junior', function () {",
+                  "    let jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.candidateEvaluation.overallScore).to.equal(62);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"jobDescription\": \"Junior Developer - Java, Spring, SQL\",\n  \"interviewTranscript\": \"Interviewer: Tell me about your Java experience. Candidate: I have 6 months of professional Java experience. I understand OOP basics and have built a few REST APIs with Spring. I'm still learning about database optimization and system design.\",\n  \"seniority\": \"junior\",\n  \"evaluateInterviewer\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/evaluate/full",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "evaluate", "full"]
+            },
+            "description": "Junior candidate with interviewer assessment\nExpected junior score: 62, verdict 'borderline'"
+          },
+          "response": []
+        }
+      ],
+      "description": "POST /api/v1/evaluate/full\nCandidate + Optional interviewer evaluation\n\nRequest:\n- jobDescription (required)\n- interviewTranscript (required)\n- seniority (required): 'junior', 'mid', or 'senior'\n- evaluateInterviewer (optional, default false): true|false\n\nResponse:\n- candidateEvaluation (always present)\n- interviewerEvaluation (null if evaluateInterviewer=false)\n- evaluatedAt timestamp"
+    },
+    {
+      "name": "Error Handling & Validation",
+      "item": [
+        {
+          "name": "Error - Missing jobDescription",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test('Response has error status', function () {",
+                  "    let jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.status).to.equal('error');",
+                  "    pm.expect(jsonData.message).to.exist;",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"interviewTranscript\": \"This is a valid transcript with sufficient content\",\n  \"seniority\": \"senior\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/evaluate",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "evaluate"]
+            },
+            "description": "Missing jobDescription - should return 400 BAD_REQUEST with error message"
+          },
+          "response": []
+        },
+        {
+          "name": "Error - Missing interviewTranscript",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test('Error message mentions interviewTranscript', function () {",
+                  "    let jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.status).to.equal('error');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"jobDescription\": \"Senior Engineer role\",\n  \"seniority\": \"senior\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/evaluate",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "evaluate"]
+            },
+            "description": "Missing interviewTranscript - should return 400 BAD_REQUEST"
+          },
+          "response": []
+        },
+        {
+          "name": "Error - Missing seniority",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"jobDescription\": \"Senior Engineer role\",\n  \"interviewTranscript\": \"This is a valid transcript with sufficient content\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/evaluate",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "evaluate"]
+            },
+            "description": "Missing seniority - should return 400 BAD_REQUEST"
+          },
+          "response": []
+        },
+        {
+          "name": "Error - Invalid seniority level",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test('Error message mentions valid seniority values', function () {",
+                  "    let jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.message.toLowerCase()).to.include('junior');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"jobDescription\": \"Senior Engineer role\",\n  \"interviewTranscript\": \"This is a valid transcript with sufficient content\",\n  \"seniority\": \"expert\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/evaluate",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "evaluate"]
+            },
+            "description": "Invalid seniority level (must be 'junior', 'mid', or 'senior')\nShould return 400 with error message indicating valid values"
+          },
+          "response": []
+        },
+        {
+          "name": "Error - Invalid JSON format",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{ invalid json }"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/evaluate",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "evaluate"]
+            },
+            "description": "Malformed JSON - should return 400 BAD_REQUEST"
+          },
+          "response": []
+        },
+        {
+          "name": "Error - Unknown endpoint",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 404', function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/unknown",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "unknown"]
+            },
+            "description": "Non-existent endpoint - should return 404 NOT_FOUND"
+          },
+          "response": []
+        }
+      ],
+      "description": "Test error handling and validation\n\nValidation Rules:\n- jobDescription: required, must not be blank\n- interviewTranscript: required, must not be blank\n- seniority: required, must be 'junior', 'mid', or 'senior'\n- evaluateInterviewer: optional boolean (default false)\n\nError Response Format:\n{\n  \"status\": \"error\",\n  \"message\": \"descriptive error message\",\n  \"timestamp\": \"ISO-8601 timestamp\"\n}"
+    },
+    {
+      "name": "Feature Flag Configuration",
+      "item": [
+        {
+          "name": "Current Configuration Info",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/",
+              "host": ["{{base_url}}"],
+              "path": [""]
+            },
+            "description": "Get API info (includes service details)\n\nCurrent configuration:\n- ai.enabled: false (using DummyEvaluationService)\n- ai.provider: openai\n- ai.model: gpt-4-turbo\n- ai.temperature: 0.0\n\nWhen ai.enabled=true, will use AiEvaluationService\nAll other code remains unchanged"
+          },
+          "response": []
+        }
+      ],
+      "description": "Feature flag configuration and status\n\nDISABLED (default):\nai.enabled: false\n→ Uses DummyEvaluationService\n→ Returns deterministic, seniority-based responses\n→ No external API calls\n→ Perfect for testing and development\n\nENABLED (future):\nai.enabled: true\n→ Uses AiEvaluationService\n→ Calls real LLM API (OpenAI, Anthropic, etc.)\n→ Requires valid API key\n→ Zero code changes needed to switch!"
+    },
+    {
+      "name": "Test Scenarios & Documentation",
+      "item": [
+        {
+          "name": "Deterministic Response Test",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// This test demonstrates deterministic behavior",
+                  "// Same input always produces same output",
+                  "pm.test('Response is deterministic', function () {",
+                  "    let jsonData = pm.response.json();",
+                  "    // For senior level: always score 85, verdict 'strong_hire'",
+                  "    pm.expect(jsonData.overallScore).to.equal(85);",
+                  "    pm.expect(jsonData.verdict).to.equal('strong_hire');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"jobDescription\": \"Test Job Description\",\n  \"interviewTranscript\": \"Test interview transcript\",\n  \"seniority\": \"senior\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/evaluate",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "evaluate"]
+            },
+            "description": "This request will return the exact same response every time because:\n1. DummyEvaluationService returns deterministic responses\n2. Responses are based solely on seniority level\n3. No randomness or external factors\n\nFor seniority='senior':\n- overallScore: always 85\n- verdict: always 'strong_hire'\n- communicationScore: always 9\n- problemSolvingScore: always 9\n\nTry running this multiple times - you'll get identical responses!"
+          },
+          "response": []
+        }
+      ],
+      "description": "Test scenarios and documentation for the API"
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8080",
+      "type": "string"
+    }
+  ]
+}
+

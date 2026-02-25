@@ -1,0 +1,55 @@
+spring:
+  application:
+    name: interview-evaluation-api-test
+  # Disable unnecessary auto-configurations for testing
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+      - org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
+      - org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration
+
+server:
+  port: 0
+
+logging:
+  level:
+    root: WARN
+    com.interview: DEBUG
+    org.springframework.security: DEBUG
+
+# Disable security for test profile - allows tests to run without auth complications
+security:
+  enabled: false
+
+jwt:
+  secret: test-secret-key-for-testing-purposes-only-minimum-64-chars
+  expiration: 3600000
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: always
+
+ai:
+  enabled: false
+  provider: "openai"
+  apiKey: "DUMMY_API_KEY"
+  model: "gpt-4-turbo"
+  temperature: 0.0
+
+app:
+  environment: test
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,59 @@
+spring:
+  application:
+    name: interview-evaluation-api
+
+server:
+  port: 8080
+
+logging:
+  level:
+    root: INFO
+    com.interview: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+
+# ==================== Spring Security Configuration ====================
+# SECURITY_ENABLED: Set to 'true' to enforce JWT/Basic auth on evaluation endpoints
+# When 'false' (default), all endpoints are accessible without authentication (backward compatible)
+security:
+  enabled: ${SECURITY_ENABLED:false}
+
+# JWT Token Configuration
+# jwt.secret: Should be changed in production (minimum 64 characters for HS512)
+# jwt.expiration: Token expiration time in milliseconds (default: 1 hour)
+jwt:
+  secret: ${JWT_SECRET:your-secret-key-change-in-production-minimum-64-chars}
+  expiration: ${JWT_EXPIRATION:3600000}
+
+# ==================== Spring Boot Actuator Configuration ====================
+# Exposes health, metrics, and info endpoints for monitoring and observability
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: when-authorized
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+
+# ==================== AI/LLM Configuration ====================
+ai:
+  enabled: true
+  provider: "gemini"
+  apiKey: "AIzaSyAqvyeLBVqRZ_N_EtmXh6O-D_U0DzLYh_Y"
+  apiKeys:
+    - "AIzaSyAqvyeLBVqRZ_N_EtmXh6O-D_U0DzLYh_Y"
+    - "AIzaSyAlBt1qDsSjhMAQ28ADGqoHvWdNm16EoCs"
+    - "AIzaSyCoRWHi55ZOlRfpxkBUa4Jva9w9PC-KPjQ"
+    - "AIzaSyCz08T6g0pC8BTshrb6HMFh0wweoc6rU1Y"
+  model: "gemini-flash-latest"
+  temperature: 0.0
+
+# ==================== Application-specific Configuration ====================
+app:
+  environment: ${APP_ENVIRONMENT:development}
