@@ -7,7 +7,7 @@ COPY "interview ui poc ts/my-react-app/" .
 RUN npm run build
 
 # --- Stage 2: Build the Spring Boot Backend ---
-FROM maven:3.8.4-openjdk-17-slim AS backend-build
+FROM maven:3.9.6-eclipse-temurin-17 AS backend-build
 WORKDIR /app
 COPY "interview api POC TS/pom.xml" ./
 RUN mvn dependency:go-offline -B
@@ -19,7 +19,7 @@ COPY --from=frontend-build /frontend/dist ./src/main/resources/static/
 RUN mvn clean package -DskipTests
 
 # --- Stage 3: Final Production Image ---
-FROM openjdk:17-jdk-slim
+FROM eclipse-temurin:17-jre
 WORKDIR /app
 COPY --from=backend-build /app/target/*.jar app.jar
 
