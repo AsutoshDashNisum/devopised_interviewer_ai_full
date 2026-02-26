@@ -4,7 +4,7 @@ WORKDIR /frontend
 
 # Use JSON array syntax for paths with spaces - this is the most compatible way
 COPY ["interview ui poc ts/my-react-app/package.json", "interview ui poc ts/my-react-app/package-lock.json*", "./"]
-RUN npm install
+RUN npm install --legacy-peer-deps
 COPY ["interview ui poc ts/my-react-app/", "./"]
 RUN npm run build
 
