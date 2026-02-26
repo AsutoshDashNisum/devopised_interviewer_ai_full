@@ -1,19 +1,21 @@
 # --- Stage 1: Build the React Frontend ---
 FROM node:20-slim AS frontend-build
 WORKDIR /frontend
-COPY "interview ui poc ts/my-react-app/package*.json" /frontend/
+
+# Use JSON array syntax for paths with spaces - this is the most compatible way
+COPY ["interview ui poc ts/my-react-app/package.json", "interview ui poc ts/my-react-app/package-lock.json*", "./"]
 RUN npm install
-COPY "interview ui poc ts/my-react-app/" .
+COPY ["interview ui poc ts/my-react-app/", "./"]
 RUN npm run build
 
 # --- Stage 2: Build the Spring Boot Backend ---
 FROM maven:3.9.6-eclipse-temurin-17 AS backend-build
 WORKDIR /app
-COPY "interview api POC TS/pom.xml" ./
+COPY ["interview api POC TS/pom.xml", "./"]
 RUN mvn dependency:go-offline -B
-COPY "interview api POC TS/src" ./src/
+COPY ["interview api POC TS/src", "./src/"]
 
-# Copy the React build output into the Spring Boot static resources directory
+# Copy React build into Spring Boot static resources
 COPY --from=frontend-build /frontend/dist ./src/main/resources/static/
 
 RUN mvn clean package -DskipTests
