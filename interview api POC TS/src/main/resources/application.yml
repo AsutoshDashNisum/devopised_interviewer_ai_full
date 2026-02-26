@@ -45,7 +45,7 @@ management:
 ai:
   enabled: true
   provider: "gemini"
-  apiKey: "AIzaSyCvTIecozHTwXKuffssdASaZeqQFdSA7YQ"
+  apiKey: ${AI_API_KEY:AIzaSyCvTIecozHTwXKuffssdASaZeqQFdSA7YQ}
   apiKeys:
     - "AIzaSyCvTIecozHTwXKuffssdASaZeqQFdSA7YQ"
     - "AIzaSyAqvyeLBVqRZ_N_EtmXh6O-D_U0DzLYh_Y"
