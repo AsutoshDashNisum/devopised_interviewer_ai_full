@@ -31,10 +31,7 @@ public class GlobalRouterConfig {
      */
     @Bean
     public RouterFunction<ServerResponse> globalRoutes() {
-        return route(GET("/health"), request ->
-                ServerResponse.ok().bodyValue(new HealthResponse("ok")))
-                .andRoute(GET("/"), request ->
-                        ServerResponse.ok().bodyValue(new ApiInfoResponse()));
+        return route(GET("/health"), request -> ServerResponse.ok().bodyValue(new HealthResponse("ok")));
     }
 
     /**
