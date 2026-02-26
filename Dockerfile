@@ -15,8 +15,9 @@ COPY ["interview api POC TS/pom.xml", "./"]
 RUN mvn dependency:go-offline -B
 COPY ["interview api POC TS/src", "./src/"]
 
-# Copy React build into Spring Boot static resources
-COPY --from=frontend-build /frontend/dist ./src/main/resources/static/
+# Copy React build into Spring Boot static resources 
+# This needs to be exactly here for Spring Boot to serve it as the root index.html
+COPY --from=frontend-build /frontend/dist/ /app/src/main/resources/static/
 
 RUN mvn clean package -DskipTests
 
