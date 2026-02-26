@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8080";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "";
 
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
@@ -34,7 +34,7 @@ export async function evaluateInterview(payload) {
       throw new Error(`API Error (${err.response.status}): ${message}`);
     } else if (err.request) {
       // Request made but no response
-      throw new Error("No response from server. Make sure the backend is running on http://localhost:8080");
+      throw new Error("No response from server. Make sure the backend service is reachable.");
     } else {
       // Error in request setup
       throw new Error(err.message || "Failed to evaluate interview");
