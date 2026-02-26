@@ -1,0 +1,24 @@
+services:
+  backend:
+    build:
+      context: "./interview api POC TS"
+      dockerfile: Dockerfile
+    image: interview-backend
+    ports:
+      - "8080:8080"
+    environment:
+      - APP_ENVIRONMENT=production
+      - SECURITY_ENABLED=false
+      - AI_API_KEY=${AI_API_KEY}
+
+  frontend:
+    build:
+      context: "./interview ui poc ts/my-react-app"
+      dockerfile: Dockerfile
+    image: interview-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    environment:
+      - VITE_API_URL=http://localhost:8080

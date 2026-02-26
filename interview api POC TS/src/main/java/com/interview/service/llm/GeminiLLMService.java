@@ -75,7 +75,8 @@ public class GeminiLLMService implements LLMService {
                         .filter(throwable -> {
                             if (throwable instanceof WebClientResponseException responseException) {
                                 int status = responseException.getStatusCode().value();
-                                return status == 429 || status == 500 || status == 503 || status == 504;
+                                return status == 403 || status == 429 || status == 500 || status == 503
+                                        || status == 504;
                             }
                             return false;
                         })

@@ -45,12 +45,14 @@ management:
 ai:
   enabled: true
   provider: "gemini"
-  apiKey: "AIzaSyAqvyeLBVqRZ_N_EtmXh6O-D_U0DzLYh_Y"
+  apiKey: "AIzaSyCvTIecozHTwXKuffssdASaZeqQFdSA7YQ"
   apiKeys:
+    - "AIzaSyCvTIecozHTwXKuffssdASaZeqQFdSA7YQ"
     - "AIzaSyAqvyeLBVqRZ_N_EtmXh6O-D_U0DzLYh_Y"
     - "AIzaSyAlBt1qDsSjhMAQ28ADGqoHvWdNm16EoCs"
     - "AIzaSyCoRWHi55ZOlRfpxkBUa4Jva9w9PC-KPjQ"
     - "AIzaSyCz08T6g0pC8BTshrb6HMFh0wweoc6rU1Y"
+    - "AIzaSyAq3RDW2E0qSojTdSsUErgJuMNd0M27ALo"
   model: "gemini-flash-latest"
   temperature: 0.0
 

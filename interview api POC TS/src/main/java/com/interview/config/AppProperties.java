@@ -49,6 +49,15 @@ public class AppProperties {
         return apiKeys.get(0);
     }
 
+    public void setApiKey(String apiKey) {
+        if (this.apiKeys == null) {
+            this.apiKeys = new java.util.ArrayList<>();
+        }
+        if (apiKey != null && !this.apiKeys.contains(apiKey)) {
+            this.apiKeys.add(0, apiKey);
+        }
+    }
+
     public String getModel() {
         return model;
     }
